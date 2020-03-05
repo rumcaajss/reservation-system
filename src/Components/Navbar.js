@@ -51,10 +51,11 @@ export default function Navbar(props) {
   };
 
   const handleLogout = () => {
-    // AuthService.signOut(() => {
-    //   Cookies.remove('fb_token');
-    //   setAnchorEl(null);
-    // });
+    AuthService.signOut(() => {
+      // props.setLoggedIn(false);
+      // Cookies.remove('fb_token');
+      setAnchorEl(null);
+    });
   };
   const handleClose = () => {
     setAnchorEl(null);

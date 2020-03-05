@@ -33,7 +33,8 @@ const useStyles = makeStyles(theme => ({
 
 function Login(props) {
   const classes = useStyles();
-  
+  const redirect = process.env.NODE_ENV === 'development' ? encodeURIComponent('http://localhost:3000/api/authorize') : encodeURIComponent('https://reservation-system.now.sh/api/authorize');
+  const auth_link = `https://slack.com/oauth/authorize?scope=identity.basic,identity.avatar&client_id=37842542386.425513927477&redirect_uri=${redirect}`
   return (
     <div>
       <Grid 
@@ -41,7 +42,6 @@ function Login(props) {
         component="main" 
         className={classes.root}
       >
-      {/* <CssBaseline /> */}
         <Grid 
           item 
           xs={false} 
@@ -73,7 +73,7 @@ function Login(props) {
           </Typography>
           <Link 
             className={classes.login} 
-            href="https://slack.com/oauth/authorize?scope=identity.basic,identity.avatar&client_id=37842542386.425513927477&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fauthorize"
+            href={auth_link}
           >
             <img 
               src="https://platform.slack-edge.com/img/sign_in_with_slack.png" 

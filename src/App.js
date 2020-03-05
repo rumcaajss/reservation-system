@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createMuiTheme, responsiveFontSizes, ThemeProvider, CssBaseline } from '@material-ui/core';
 import Navbar from './Components/Navbar';
-
 import AppRouter from './AppRouter';
-import { isLoggedIn } from './utils/Auth';
+import { AuthService } from './utils/Auth';
 
 let customizations = {
   palette: {
@@ -19,13 +18,18 @@ let customizations = {
 let theme = createMuiTheme(customizations);
 theme = responsiveFontSizes(theme);
 
+
 function App() {
-  const [loggedIn] = useState(isLoggedIn());
+  const [ loggedIn, setLoggedIn ] = useState(true);
+  useEffect(()=> {
+    AuthService.isAuthed(setLoggedIn);
+  }, [])
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline/>
       <Navbar loggedIn={loggedIn}/>
-      <AppRouter/>
+      <AppRouter loggedIn={loggedIn}/>
     </ThemeProvider>
   );
 }

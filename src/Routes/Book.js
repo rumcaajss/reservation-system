@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Grid, Container, Paper, Typography, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link as RouterLink } from 'react-router-dom';
-import { firebase } from '../firebase';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -63,22 +62,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-// useEffect(()=> {
-//   let cookieToken = Cookie.get('token'); 
-//   firebase.auth().signInWithCustomToken(cookieToken).catch(function(error) {
-//     var errorCode = error.code;
-//     var errorMessage = error.message;
-//     console.log(`Errorcode ${errorCode} and message ${errorMessage}`)
-//   });
-// }, []);
-
-
-
-
 function LoggedIn() {
   const [options] = useState([{name: 'Parking Spot', link:'/parking'}, {name: 'Camera', link:'/cameras'}])
   const classes = useStyles();
-
+  
   return (
     <main className={classes.root}>
       <Container maxWidth="xl">
@@ -116,7 +103,6 @@ function LoggedIn() {
           ))}
         </Grid>
       </Container>
-      {/* <div className={classes.pageDecoration}></div> */}
     </main>
   )
 

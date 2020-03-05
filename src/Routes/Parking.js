@@ -22,17 +22,7 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(4),
 
   },
-  // pageDecoration: {
-  //   [theme.breakpoints.up('sm')]: {
-  //     position: 'absolute',
-  //     bottom: '0',
-  //     right: '0',
-  //     height: '70%',
-  //     width: '100%',
-  //     clipPath: 'polygon(80% 80%, 100% 50%, 100% 100%, 0 100%, 0 0)',
-  //     backgroundColor: 'rgba(71, 168, 139, 0.2)',
-  //   },
-  // },
+
   heading: {
     textAlign: 'center',
     padding: theme.spacing(3, 0),
@@ -41,7 +31,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-function Parking() {
+function Parking(props) {
   const [firestoreData, setFirestoreData] = useState(firestoreParkingSeed());
   const [snackBarOpen, setSnackBarOpen] = useState(false);
   const [snackMessage, setSnackMessage] = useState('');
@@ -121,16 +111,20 @@ function Parking() {
 
 
   useEffect(() => {
-    setIsLoading(true);
-    
-    let docRef = firestore.collection("bookings").doc(documentId);
-    docRef.get().then(function(doc) {
-      if (doc.exists) {
-        subsribeToDb(docRef);
-      } else {
-        seedDb();
-      }
-    })
+    if (props.loggedIn) {
+      setIsLoading(true);
+      
+      let docRef = firestore.collection("bookings").doc(documentId);
+      docRef.get().then(function(doc) {
+        if (doc.exists) {
+          subsribeToDb(docRef);
+        } else {
+          seedDb();
+        }
+      }).catch((error)=> {
+        console.log('error')
+      })
+    }
   }, [])
   
   return (
@@ -176,7 +170,6 @@ function Parking() {
       </Grid>
       <SimpleBackdrop 
         open={isLoading} 
-        handleClose={handleBackdropClose}
       />
     </main>
   )

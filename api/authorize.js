@@ -7,7 +7,7 @@ module.exports = async (req, res) => {
   const client_id = process.env.CLIENT_ID;
   const client_secret = process.env.CLIENT_SECRET;
   const {code} = req.query;
-  const redirect_uri = `http://${host}/api/authorize`;
+  const redirect_uri = process.env.NODE_ENV === 'development' ? 'http://localhost:3000/api/authorize' : 'https://reservation-system.now.sh/api/authorize' // `http://${host}/api/authorize`;
   const params = { client_id, client_secret, code, redirect_uri };
   const authUrl = 'https://slack.com/api/oauth.access';
   
