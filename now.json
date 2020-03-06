@@ -4,7 +4,7 @@
       "CLIENT_SECRET": "@client-secret",
       "CLIENT_ID": "@client-id", 
       "PORT": "@port",
-      "GOOGLE_APPLICATION_CREDENTIALS": "@google-app-creds",
+      "GOOGLE_APPLICATION_CREDENTIALS": "@google-app-credentials",
       "REACT_APP_FIREBASE_API_KEY": "@firebase-api-key",
       "REACT_APP_AUTH_DOMAIN": "@firebase-auth-domain",
       "REACT_APP_DB_URL": "@firebase-app-url",
