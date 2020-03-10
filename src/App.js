@@ -29,7 +29,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline/>
       <Navbar loggedIn={loggedIn}/>
-      <AppRouter loggedIn={loggedIn}/>
+      <AppRouter loggedIn={loggedIn} setLoggedIn={setLoggedIn}/>
     </ThemeProvider>
   );
 }

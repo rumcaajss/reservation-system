@@ -41,9 +41,6 @@ function Parking(props) {
   const [isLoading, setIsLoading] = useState(false);
   const classes = useStyles();
  
-  const handleBackdropClose = () => {
-    setIsLoading(false);
-  };
   
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -77,8 +74,10 @@ function Parking(props) {
     .set(parkPlaces)
     .then(function() {
       setIsLoading(false);
-      setSnackBarOpen(true);
-      setSnackMessage(successMessage)
+      if (successMessage) {
+        setSnackBarOpen(true);
+        setSnackMessage(successMessage)
+      }
       setFirestoreData(parkPlaces);
     })
     .catch(function(error) {
@@ -87,8 +86,9 @@ function Parking(props) {
     });
   }
 
-  const subsribeToDb = function(document) {
-    document.onSnapshot(function(doc) {
+  const subsribeToDb = function(docRef) {
+    setIsLoading(true);
+    return docRef.onSnapshot(function(doc) {
       var source = doc.metadata.hasPendingWrites ? "Local" : "Server";
       if (source === "Server") {
         setIsLoading(false);
@@ -97,34 +97,39 @@ function Parking(props) {
     });
   }
 
-  const seedDb = function() {
-    let docRef = firestore.collection("bookings").doc(documentId)
-      .set(firestoreData)
-      .then(function() {
-        setIsLoading(false);
-      })
-      .catch(function(error) {
-        setSnackBarOpen(true);
-        setSnackMessage('Unable to sync with database.');
-      })
-  }
+  // const seedDb = function() {
+  //   setIsLoading(true);
+  //   let docRef = firestore.collection("bookings").doc(documentId)
+  //     .set(firestoreData)
+  //     .then(function() {
+  //       setIsLoading(false);
+  //     })
+  //     .catch(function(error) {
+  //       setSnackBarOpen(true);
+  //       setSnackMessage('Unable to sync with database.');
+  //     })
+  // }
 
 
   useEffect(() => {
-    if (props.loggedIn) {
-      setIsLoading(true);
-      
-      let docRef = firestore.collection("bookings").doc(documentId);
-      docRef.get().then(function(doc) {
-        if (doc.exists) {
-          subsribeToDb(docRef);
-        } else {
-          seedDb();
-        }
-      }).catch((error)=> {
-        console.log('error')
-      })
-    }
+    var unsubscribe;
+    let docRef = firestore.collection("bookings").doc(documentId);
+    docRef.get().then(function(doc) {
+      if (doc.exists) {
+        unsubscribe = subsribeToDb(docRef);
+      } else {
+        updateDb(firestoreData);
+        // seedDb();
+      }
+    }).catch((error)=> {
+      console.log('error')
+    })
+
+    return () => {
+      if (typeof unsubscribe === "function") {
+        unsubscribe()
+      } 
+    };
   }, [])
   
   return (
