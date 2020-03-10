@@ -10,10 +10,11 @@ export const AuthService = {
       firebase.auth().signInWithCustomToken(cookieToken)
       .then(() => {
         if (cb) {
-          cb();
+          cb(true);
         }
       }).catch((error) => {
           console.error('Error singing in.');
+          cb(false);
       });
     }
   },
@@ -24,15 +25,16 @@ export const AuthService = {
     });
   },
 
-  async signOut(cb) { 
+  async signOut(cb) {
+     
     await firebase.auth().signOut().then(() => {
       Cookies.remove(TOKEN_KEY);
+      if (cb) {
+        cb();
+      }
       console.log('User has been logged out');
     }).catch((error) => {
       console.log('error logging out'); 
     });
-    if (cb) {
-      cb();
-    }
   }
 }

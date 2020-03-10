@@ -1,6 +1,6 @@
 const axios = require('axios');
 const qs = require('qs');
-const { admin, db } = require("../firestore");
+const { app, db } = require("../firestore");
 
 module.exports = async (req, res) => {
   const {host} = req.headers;
@@ -19,14 +19,13 @@ module.exports = async (req, res) => {
       const avatars = {image_24, image_32, image_48, image_192, image_512, image_1024};
       const {access_token} = response.data;
       let data = {name, id, avatars};
-
       try {
         await db.collection('sessions').doc(access_token).set(data);
       } catch(e) {
         console.log('fail :(')
       }
 
-      admin.auth().createCustomToken(id)
+      app.auth().createCustomToken(id)
         .then(function(fireBaseToken) {
           res.setHeader("Set-Cookie", [`token=${access_token};path=/`, `fb_token=${fireBaseToken};path=/`, `name=${encodeURIComponent(name)};path=/`, `avatar=${image_192};path=/`]);
           res.setHeader("Content-type", "text/html");

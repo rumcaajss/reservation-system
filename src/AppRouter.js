@@ -6,13 +6,14 @@ import Parking from './Routes/Parking';
 import Cameras from './Routes/Cameras';
 import Login from './Routes/Login';
 import Book from './Routes/Book';
+import NotFound from './Routes/NotFound';
 import { AuthService } from './utils/Auth';
 
 
 function AppRouter(props){
   useEffect(() => {
-    AuthService.authenticate();
-  }, []);
+    AuthService.authenticate(props.setLoggedIn);
+  }, [props.loggedIn]);
 
   return (
     <Switch>
@@ -24,6 +25,7 @@ function AppRouter(props){
         <Parking loggedIn={props.loggedIn}/>
       </PrivateRoute>
       <Route path="/login" render={() => props.loggedIn ? <Redirect to={{pathname: '/'}}/> : <Login/>}/>
+      <Route component={NotFound} />
     </Switch>
   )
 }

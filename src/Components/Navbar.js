@@ -1,13 +1,16 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import { Typography  } from '@material-ui/core';
-import IconButton from '@material-ui/core/IconButton';
+import { Typography, 
+        Toolbar, 
+        AppBar, 
+        MenuItem, 
+        Avatar, 
+        Box, 
+        Menu, 
+        IconButton  } 
+        from '@material-ui/core';
 import { AuthService } from '../utils/Auth';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
-import { Avatar, Box } from '@material-ui/core';
+import { useHistory } from "react-router-dom";
 import Cookies from 'js-cookie';
 
 const useStyles = makeStyles(theme => ({
@@ -41,19 +44,18 @@ const useStyles = makeStyles(theme => ({
 
 export default function Navbar(props) {
   const classes = useStyles();
+  let history = useHistory();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const avatar = Cookies.get('avatar');
   const name = Cookies.get('name');
-
   const handleMenu = event => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleLogout = () => {
     AuthService.signOut(() => {
-      // props.setLoggedIn(false);
-      // Cookies.remove('fb_token');
+      history.push("/login");
       setAnchorEl(null);
     });
   };
