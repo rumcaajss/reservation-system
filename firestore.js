@@ -1,7 +1,5 @@
 const admin = require("firebase-admin");
-var key = process.env.FIREBASE_PRIVATE_KEY;
-
-console.log('key ' + key);
+var key = process.env.FIREBASE_KEY;
 
 var app = admin.initializeApp({
   credential: admin.credential.cert({
