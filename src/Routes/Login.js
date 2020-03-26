@@ -32,9 +32,10 @@ const useStyles = makeStyles(theme => ({
 
 
 function Login(props) {
+  const teamId = process.env.REACT_APP_TEAM_ID;
   const classes = useStyles();
   const redirect = process.env.NODE_ENV === 'development' ? encodeURIComponent('http://localhost:3000/api/authorize') : encodeURIComponent('https://reservation-system.now.sh/api/authorize');
-  const auth_link = `https://slack.com/oauth/authorize?scope=identity.basic,identity.avatar&client_id=37842542386.425513927477&redirect_uri=${redirect}`
+  const auth_link = `https://slack.com/oauth/authorize?scope=identity.basic,identity.avatar&client_id=37842542386.425513927477&redirect_uri=${redirect}&team=${teamId}`;
   return (
     <div>
       <Grid 
