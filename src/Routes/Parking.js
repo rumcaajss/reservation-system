@@ -4,8 +4,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import Cookies from 'js-cookie';
 import ParkingPlace from '../Components/ParkingPlace.js';
 import SimpleBackdrop from '../Components/Backdrop.js';
+import Logs from '../Components/Logs.js';
 import { firestore } from '../firebase';
-import { generateDocId } from '../utils/utils'; 
+import { generateDocId, getCurrentDateHuman } from '../utils/utils'; 
 import { firestoreParkingSeed } from '../utils/seeds'; 
 
 const useStyles = makeStyles(theme => ({
@@ -40,7 +41,11 @@ function Parking(props) {
   const [documentId] = useState(generateDocId());
   const [isLoading, setIsLoading] = useState(false);
   const classes = useStyles();
- 
+  const headerMessage = `You're booking parking for ${getCurrentDateHuman()}`;
+  const actions = {
+    RELEASE: 'release',
+    RESERVE: 'reserve'
+  }
   
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -49,6 +54,16 @@ function Parking(props) {
     setSnackBarOpen(false);
   };
 
+
+  const generateLogMessage = function(spot, action) {
+    let timeStamp = new Date().toLocaleString();
+    let log = {};
+    log.name = name;
+    log.avatar = avatar;
+    log.text = action === actions.RESERVE ? `${timeStamp}: spot ${spot} reserved by ${name}` : `${timeStamp}: spot ${spot} released by ${name}`;
+    return log;
+  }
+
   const handleSpotClick = function(spot) {
     let firestoreDataCopy = {...firestoreData};
     let successMessage = '';
@@ -56,6 +71,8 @@ function Parking(props) {
       firestoreDataCopy.places[spot].free = true;
       firestoreDataCopy.places[spot].taken_by.avatar = '';
       firestoreDataCopy.places[spot].taken_by.name = '';
+      let log = generateLogMessage(spot, actions.RELEASE);
+      firestoreDataCopy.logs.push(log);
       successMessage = `Spot ${spot} released!`;
       updateDb(firestoreDataCopy, successMessage);
     }
@@ -64,6 +81,8 @@ function Parking(props) {
       firestoreDataCopy.places[spot].taken_by.avatar = avatar||'';
       firestoreDataCopy.places[spot].taken_by.name = name||'';
       successMessage = `Spot ${spot} reserved!`;
+      let log = generateLogMessage(spot, actions.RESERVE);
+      firestoreDataCopy.logs.push(log);
       updateDb(firestoreDataCopy, successMessage);
     }
   }
@@ -96,19 +115,6 @@ function Parking(props) {
       }
     });
   }
-
-  // const seedDb = function() {
-  //   setIsLoading(true);
-  //   let docRef = firestore.collection("bookings").doc(documentId)
-  //     .set(firestoreData)
-  //     .then(function() {
-  //       setIsLoading(false);
-  //     })
-  //     .catch(function(error) {
-  //       setSnackBarOpen(true);
-  //       setSnackMessage('Unable to sync with database.');
-  //     })
-  // }
 
 
   useEffect(() => {
@@ -151,7 +157,7 @@ function Parking(props) {
         variant="h4" 
         component="h2"
       >
-        Click a spot you'd like to book
+        {headerMessage}
       </Typography>
       <Grid
         container
@@ -173,6 +179,7 @@ function Parking(props) {
           </Grid>
         ))}
       </Grid>
+      <Logs logs={firestoreData.logs} />
       <SimpleBackdrop 
         open={isLoading} 
       />

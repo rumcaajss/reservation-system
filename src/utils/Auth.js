@@ -16,6 +16,8 @@ export const AuthService = {
           console.error('Error singing in.');
           cb(false);
       });
+    } else {
+      cb(false);
     }
   },
   
