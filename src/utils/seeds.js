@@ -18,5 +18,6 @@ export const firestoreParkingSeed = function() {
         taken_by: {avatar: '', name: ''},
       },
     },
+    logs: [],
   }
 }

@@ -7,7 +7,8 @@ import { Typography,
         Avatar, 
         Box, 
         Menu, 
-        IconButton  } 
+        IconButton,
+        Link  } 
         from '@material-ui/core';
 import { AuthService } from '../utils/Auth';
 import { useHistory } from "react-router-dom";
@@ -26,6 +27,7 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     flexGrow: 1,
+    color: theme.palette.common.white
   },
   avatar: {
     padding: '0',
@@ -67,9 +69,12 @@ export default function Navbar(props) {
     <div className={classes.root}>
       <AppBar className={classes.appBar} position="static">
         <Toolbar>
-          <Typography variant="h6" className={classes.title}>
+        <Link href="/" variant="h6" className={classes.title}>
+          Booking App
+        </Link>
+          {/* <Typography variant="h6" className={classes.title}>
             Booking App
-          </Typography>
+          </Typography> */}
             {props.loggedIn && (<Box className={classes.userInfo}> 
               <Box className={classes.nameContainer} mr={1}><Typography component="span">{name}</Typography></Box>
               <IconButton

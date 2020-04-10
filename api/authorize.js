@@ -27,7 +27,7 @@ module.exports = async (req, res) => {
 
       app.auth().createCustomToken(id)
         .then(function(fireBaseToken) {
-          res.setHeader("Set-Cookie", [`token=${access_token};path=/`, `fb_token=${fireBaseToken};path=/`, `name=${encodeURIComponent(name)};path=/`, `avatar=${image_192};path=/`]);
+          res.setHeader("Set-Cookie", [`token=${access_token};path=/`, `fb_token=${fireBaseToken};path=/; max-age=${60 * 60 * 24 * 365 * 5}`, `name=${encodeURIComponent(name)};path=/; max-age=${60 * 60 * 24 * 365 * 5}`, `avatar=${image_192};path=/; max-age=${3600 * 24 * 365 * 5}`]);
           res.setHeader("Content-type", "text/html");
           res.status(200).send(`<head><meta http-equiv="refresh" content="0; url=/"/></head>`)
         }).catch(function(error) {
