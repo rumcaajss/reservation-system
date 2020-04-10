@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
   parkingGrid: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
-
+    width: '100%',
   },
 
   heading: {
@@ -61,6 +61,7 @@ function Parking(props) {
     log.name = name;
     log.avatar = avatar;
     log.text = action === actions.RESERVE ? `${timeStamp}: spot ${spot} reserved by ${name}` : `${timeStamp}: spot ${spot} released by ${name}`;
+    log.action = action;
     return log;
   }
 

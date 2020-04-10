@@ -9,10 +9,14 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    margin: theme.spacing(4),
+    marginLeft: theme.spacing(4),
+    marginRight: theme.spacing(4),
   },
-  listItem: {
-    borderLeft: `3px solid ${theme.palette.secondary.main}`
+  listItemRelease: {
+    borderLeft: `3px solid ${theme.palette.secondary.main}`,
+  },
+  listItemReserve: {
+    borderLeft: `3px solid ${theme.palette.error.light}`,
   }
 }));
 
@@ -22,11 +26,10 @@ function Logs(props) {
   const classes = useStyles();
   const logs = props.logs || [];
   return (
-
     <List dense className={classes.root}>
       {logs.map((value, index) => {
         return (
-          <ListItem key={index} className={classes.listItem}>
+          <ListItem key={index} className={value.action === 'release' ? classes.listItemRelease : classes.listItemReserve}>
             <ListItemAvatar>
               <Avatar
                 alt={value.name}
