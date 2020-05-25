@@ -154,7 +154,6 @@ function Parking(props) {
       <div className={classes.pageDecoration}></div>
       <Typography 
         className={classes.heading} 
-        color="secondary" 
         variant="h4" 
         component="h2"
       >
