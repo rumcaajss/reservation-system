@@ -6,7 +6,8 @@ import ParkingPlace from '../Components/ParkingPlace.js';
 import SimpleBackdrop from '../Components/Backdrop.js';
 import Logs from '../Components/Logs.js';
 import { firestore } from '../firebase';
-import { generateDocId, getCurrentDateHuman } from '../utils/utils'; 
+import { format } from 'date-fns';
+import { generateDocId } from '../utils/utils'; 
 import { firestoreParkingSeed } from '../utils/seeds'; 
 
 const useStyles = makeStyles(theme => ({
@@ -41,7 +42,7 @@ function Parking(props) {
   const [documentId] = useState(generateDocId());
   const [isLoading, setIsLoading] = useState(false);
   const classes = useStyles();
-  const headerMessage = `You're booking parking for ${getCurrentDateHuman()}`;
+  const headerMessage = `You're booking parking for ${format(new Date(), "do MMMM")}`;
   const actions = {
     RELEASE: 'release',
     RESERVE: 'reserve'
@@ -56,7 +57,7 @@ function Parking(props) {
 
 
   const generateLogMessage = function(spot, action) {
-    let timeStamp = new Date().toLocaleString();
+    let timeStamp = format(new Date(), "d/MM/yyyy H:mm")
     let log = {};
     log.name = name;
     log.avatar = avatar;
@@ -90,7 +91,7 @@ function Parking(props) {
   
   const updateDb = function(parkPlaces, successMessage, errorMessage) {
     setIsLoading(true);
-    var docRef = firestore.collection("bookings").doc(documentId)
+    firestore.collection("bookings").doc(documentId)
     .set(parkPlaces)
     .then(function() {
       setIsLoading(false);
@@ -126,7 +127,6 @@ function Parking(props) {
         unsubscribe = subsribeToDb(docRef);
       } else {
         updateDb(firestoreData);
-        // seedDb();
       }
     }).catch((error)=> {
       console.log('error')

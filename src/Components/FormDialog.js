@@ -1,24 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import Button from '@material-ui/core/Button';
-import Avatar from '@material-ui/core/Avatar';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Box from '@material-ui/core/Box';
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Cookies from 'js-cookie';
+import React, { useState } from 'react';
+import { 
+  Button,
+  Avatar,
+  FormControlLabel,
+  Checkbox,
+  Box,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControl, 
+  InputLabel, 
+  Select, 
+  MenuItem, 
+  Grid, 
+  Typography, 
+} from '@material-ui/core';
 import {
   MuiPickersUtilsProvider,
   TimePicker,
   DatePicker,
 } from '@material-ui/pickers';
-import { FormControl, InputLabel, Select, MenuItem, Grid, Typography, Paper } from '@material-ui/core';
-import DateFnsUtils from '@date-io/date-fns';
 import { makeStyles } from '@material-ui/core/styles';
+
+import Cookies from 'js-cookie';
+import DateFnsUtils from '@date-io/date-fns';
+import { isBefore } from 'date-fns';
 
 const useStyles = makeStyles((theme) => ({
   formElement: {
@@ -47,6 +55,8 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function FormDialog(props) {
+  const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const name = Cookies.get('name');
   const preview = props.preview;
   const cameraNeeded = props.cameraNeeded;
@@ -67,10 +77,31 @@ export default function FormDialog(props) {
   } 
 
 
+  const onEndDateChange = (newValue) => {
+    setError(false);
+    setErrorMsg('');
+    if (isBefore(newValue, props.startDate)) {
+      props.setEndDate(props.startDate);
+      setError(true);
+      setErrorMsg('End time can\'t be before start time.');
+      return;
+    }
+    props.setEndDate(newValue);
+  }
+  
+  const onStartDateChange = (newValue) => {
+    props.setStartDate(newValue);
+    props.setEndDate(newValue);
+  }
+  
   const handleRoomChange = (event) => {
-    props.onBookingRoomChange(event.target.value);
+    props.setBookingRoom(event.target.value);
   };
 
+  const handleRoomNeededChange = (event) => {
+    props.setBookingRoom(''); 
+    props.setRoomNeeded(event.target.checked)
+  }
 
   return (
     <div>      
@@ -105,9 +136,8 @@ export default function FormDialog(props) {
                 id="date-picker-inline"
                 label="Select Date"
                 disablePast
-                // value={props.evt.start ? props.evt.start : props.startDate}
                 value={props.startDate}
-                onChange={props.onStartDateChange}
+                onChange={onStartDateChange}
                 className={classes.formElement}
               />
               <TimePicker
@@ -117,9 +147,8 @@ export default function FormDialog(props) {
                 margin="normal"
                 id="start-time"
                 label="Start time"
-                // value={props.evt.start ? props.evt.start : props.startDate}
                 value={props.startDate}
-                onChange={props.onStartDateChange}
+                onChange={onStartDateChange}
                 ampm={false}
                 className={classes.formElement}
               />
@@ -127,12 +156,13 @@ export default function FormDialog(props) {
                 disabled={lockEdit}
                 required={true}
                 autoOk
+                error={error}
+                helperText={errorMsg}
                 margin="normal"
                 id="end-time"
                 label="End Time"
-                // value={props.evt.end ? props.evt.end : props.endDate}
                 value={props.endDate}
-                onChange={props.onEndDateChange}
+                onChange={onEndDateChange}
                 ampm={false}
                 className={classes.formElement}
               />
@@ -142,7 +172,7 @@ export default function FormDialog(props) {
                     <Checkbox
                       disabled={lockEdit}
                       checked={cameraNeeded}
-                      onChange={(evt) => props.onCameraNeededChange(evt.target.checked)}
+                      onChange={(evt) => props.setCameraNeeded(evt.target.checked)}
                       name="camera"
                       color="primary"
                     />
@@ -154,7 +184,7 @@ export default function FormDialog(props) {
                     <Checkbox
                       disabled={lockEdit}
                       checked={roomNeeded}
-                      onChange={(evt) => props.onRoomNeededChange(evt.target.checked)}
+                      onChange={handleRoomNeededChange}
                       name="room"
                       color="primary"
                     />
@@ -169,7 +199,6 @@ export default function FormDialog(props) {
                     disabled={lockEdit}
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
-                    // value={props.evt.room ? props.evt.room : props.bookingRoom}
                     value={props.bookingRoom}
                     onChange={handleRoomChange}
                   >
