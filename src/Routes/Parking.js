@@ -119,7 +119,7 @@ function Parking(props) {
 
 
   useEffect(() => {
-    var unsubscribe;
+    let unsubscribe;
     let docRef = firestore.collection("bookings").doc(documentId);
     docRef.get().then(function(doc) {
       if (doc.exists) {
@@ -154,7 +154,6 @@ function Parking(props) {
       <div className={classes.pageDecoration}></div>
       <Typography 
         className={classes.heading} 
-        color="secondary" 
         variant="h4" 
         component="h2"
       >

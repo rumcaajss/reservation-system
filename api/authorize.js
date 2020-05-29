@@ -19,11 +19,6 @@ module.exports = async (req, res) => {
       const avatars = {image_24, image_32, image_48, image_192, image_512, image_1024};
       const {access_token} = response.data;
       let data = {name, id, avatars};
-      try {
-        await db.collection('sessions').doc(access_token).set(data);
-      } catch(e) {
-        console.log('fail :(')
-      }
 
       app.auth().createCustomToken(id)
         .then(function(fireBaseToken) {

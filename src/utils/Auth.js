@@ -7,15 +7,18 @@ export const AuthService = {
   authenticate(cb) {
     let cookieToken = Cookies.get(TOKEN_KEY); 
     if (cookieToken) {
-      firebase.auth().signInWithCustomToken(cookieToken)
-      .then(() => {
-        if (cb) {
-          cb(true);
-        }
-      }).catch((error) => {
-          console.error('Error singing in.');
-          cb(false);
-      });
+      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+        .then((function(){
+          return firebase.auth().signInWithCustomToken(cookieToken)
+        }))
+        .then(() => {
+          if (cb) {
+            cb(true);
+          }
+        }).catch((error) => {
+            console.error('Error singing in.');
+            cb(false);
+        });
     } else {
       cb(false);
     }
