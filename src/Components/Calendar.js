@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar'
-import {  format, 
-          parse, 
-          startOfWeek, 
-          getDay, 
-          setHours, 
-          setMinutes, 
-          isBefore,
+import {  
+  format, 
+  parse, 
+  startOfWeek, 
+  getDay, 
+  setHours, 
+  setMinutes, 
+  isBefore,
 } from 'date-fns';
 
 import FormDialog from '../Components/FormDialog';
 import { Button, Container, Box } from '@material-ui/core';
-import { flexbox } from '@material-ui/system';
+
 import Cookies from 'js-cookie';
-import { firebase, firestore } from '../firebase'
+import { firestore } from '../firebase'
 
 const locales = {
   'en-US': require('date-fns/locale/en-US'),
@@ -29,6 +30,7 @@ const localizer = dateFnsLocalizer({
 
 function MyCalendar(props) {
   const EXAMS_COLLECTION = 'exams';
+  const { setSnackBarOpen, setSnackMessage } = props;
   const scrollToTime = setMinutes(setHours(new Date(), 6), 0)
   const [events, setEvents]  = useState({});
   const [activeEvent, setActiveEvent] = useState({});
@@ -44,6 +46,8 @@ function MyCalendar(props) {
 
   const handleSlotSelect = ({ start, end }) => {
     if (isBefore(start, new Date())) {
+      setSnackBarOpen(true);
+      setSnackMessage('Please select a future date :)');
       return;
     }
     setStartDate(start);
@@ -52,6 +56,7 @@ function MyCalendar(props) {
 
   }
   const handleSubmit = async (examId) => {
+
     let evt = {
       name: name,
       room: bookingRoom,
@@ -82,41 +87,48 @@ function MyCalendar(props) {
   const updateExam = async (id, data) => {
     try {
       await firestore.collection(EXAMS_COLLECTION).doc(id).set(data);
+      let evtCopy = {...events};
+      for (let param in data) {
+        evtCopy[id][param] = data[param];
+      }
+      setEvents({...evtCopy});
+      setSnackBarOpen(true);
+      setSnackMessage('Event has been updated!');
     } catch(e) {
-      console.log('unable to update');
+      setSnackBarOpen(true);
+      setSnackMessage('Something went wrong. Please try again.');
     }
 
-    let evtCopy = {...events};
-    for (let param in data) {
-      evtCopy[id][param] = data[param];
-    }
-    setEvents({...evtCopy});
   }
 
   const createExam = async (exam) => {
     try {
       const docRef = await firestore.collection(EXAMS_COLLECTION).add(exam);
+      setSnackBarOpen(true);
+      setSnackMessage('Event succesfully created!');
       let id = docRef.id;
       let newEvt = {};
       exam._id = id;
       newEvt[id] = exam;
       setEvents({...events, ...newEvt});
     } catch(e) {
-      console.log('error writing to DB');
+      setSnackBarOpen(true);
+      setSnackMessage('Something went wrong. Please try again.');
     }
   }
 
-  const removeEvent = async (id) => {
+  const removeExam = async (id) => {
     try {
       await firestore.collection(EXAMS_COLLECTION).doc(id).delete();
-      console.log("Document successfully deleted!");
+      let evtCopy = {...events};
+      delete evtCopy[id];
+      setEvents({...evtCopy});
+      setSnackBarOpen(true);
+      setSnackMessage('Event succesfully removed!');
     } catch(e) {
-      console.error("Error removing document: ", e);
+      setSnackBarOpen(true);
+      setSnackMessage('Something went wrong. Please try again.');
     }
-
-    let evtCopy = {...events};
-    delete evtCopy[id];
-    setEvents({...evtCopy});
 
     setModalOpen(false);
     resetState();
@@ -163,8 +175,7 @@ function MyCalendar(props) {
   return(
     <div>
       <Container
-        maxWidth={'md'}
-        
+        maxWidth="lg"
         > 
         <Box
           display="flex"
@@ -180,7 +191,7 @@ function MyCalendar(props) {
           defaultView={Views.WEEK}
           localizer={localizer}
           events={Object.values(events)}
-          style={{ height: 500 }}
+          style={{ height: 650 }}
           onSelectEvent={handleEventClick}
           onSelectSlot={handleSlotSelect}
           scrollToTime={scrollToTime}
@@ -190,16 +201,16 @@ function MyCalendar(props) {
           onSubmitModal={handleSubmit}
           onCloseModal={handleClose}
           startDate={startDate}
-          onStartDateChange={setStartDate}
+          setStartDate={setStartDate}
           endDate={endDate}
-          onEndDateChange={setEndDate}
+          setEndDate={setEndDate}
           bookingRoom={bookingRoom}
-          onBookingRoomChange={setBookingRoom}
+          setBookingRoom={setBookingRoom}
           cameraNeeded={cameraNeeded}
-          onCameraNeededChange={setCameraNeeded}
+          setCameraNeeded={setCameraNeeded}
           roomNeeded={roomNeeded}
-          onRoomNeededChange={setRoomNeeded}
-          onRemoveEvent={removeEvent}
+          setRoomNeeded={setRoomNeeded}
+          onRemoveEvent={removeExam}
           evt={activeEvent}
           preview={preview}
         />
