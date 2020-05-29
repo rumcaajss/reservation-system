@@ -119,7 +119,7 @@ function Parking(props) {
 
 
   useEffect(() => {
-    var unsubscribe;
+    let unsubscribe;
     let docRef = firestore.collection("bookings").doc(documentId);
     docRef.get().then(function(doc) {
       if (doc.exists) {
