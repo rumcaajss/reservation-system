@@ -8,7 +8,6 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     minHeight: 'calc(100vh - 56px)',
-    backgroundColor: theme.palette.grey['200'],
     position: 'relative'
   },
   button: {
@@ -29,7 +28,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
     height: 300,
     width: 200,
-    backgroundColor: theme.palette.grey['100'],
   },
 
   gridContainer: {
@@ -104,9 +102,6 @@ function Book(props) {
           ))}
         </Grid>
       </Container>
-      <LoginDialog
-        // open={!props.loggedIn}
-      />
     </main>
   )
 

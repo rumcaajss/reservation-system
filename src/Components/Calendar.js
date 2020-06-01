@@ -56,9 +56,8 @@ function MyCalendar(props) {
 
   }
   const handleSubmit = async (examId) => {
-
     let evt = {
-      name: name,
+      title: name,
       room: bookingRoom,
       start: startDate,
       end: endDate,

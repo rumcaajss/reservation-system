@@ -15,7 +15,6 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     height: 180,
     width: '100%',
-    background: theme.palette.grey['100'],
     [theme.breakpoints.up('sm')]: {
       height: 300,
     },
