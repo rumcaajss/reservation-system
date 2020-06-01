@@ -58,9 +58,7 @@ export default function FormDialog(props) {
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const name = Cookies.get('name');
-  const preview = props.preview;
-  const cameraNeeded = props.cameraNeeded;
-  const roomNeeded = props.roomNeeded;
+  const { preview, cameraNeeded, roomNeeded } = props;
   const lockSubmit = !preview && roomNeeded && !props.bookingRoom;
   const evtId = props.evt._id || null;
   let lockEdit = false;

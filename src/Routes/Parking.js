@@ -15,7 +15,6 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     minHeight: 'calc(100vh - 56px)',
-    backgroundColor: theme.palette.grey['200'],
     position: 'relative'
   },
 

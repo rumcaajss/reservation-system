@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { Grid, Container, Paper, Typography, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link as RouterLink } from 'react-router-dom';
+import LoginDialog from '../Components/LoginDialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     minHeight: 'calc(100vh - 56px)',
-    backgroundColor: theme.palette.grey['200'],
     position: 'relative'
   },
   button: {
@@ -28,7 +28,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
     height: 300,
     width: 200,
-    backgroundColor: theme.palette.grey['100'],
   },
 
   gridContainer: {
@@ -62,7 +61,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-function LoggedIn() {
+function Book(props) {
   const [options] = useState([{name: 'Parking Spot', link:'/parking'}, {name: 'Camera', link:'/cameras'}])
   const classes = useStyles();
   
@@ -108,4 +107,4 @@ function LoggedIn() {
 
 } 
 
-export default LoggedIn;
+export default Book;

@@ -17,7 +17,7 @@ function AppRouter(props){
 
   return (
     <Switch>
-      <Route exact path="/" component={Book}/>
+      <Route exact path="/" loggedIn={props.loggedIn} component={Book}/>
       <PrivateRoute loggedIn={props.loggedIn} exact path="/cameras">
         <Cameras/>
       </PrivateRoute>
