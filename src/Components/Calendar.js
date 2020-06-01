@@ -12,6 +12,7 @@ import {
 } from 'date-fns';
 
 import FormDialog from '../Components/FormDialog';
+import EventComponent from '../Components/EventComponent';
 import { Button, Container, Box } from '@material-ui/core';
 
 import Cookies from 'js-cookie';
@@ -187,6 +188,7 @@ function MyCalendar(props) {
         </Box>
         <Calendar
           selectable
+          components={{event: EventComponent}}
           defaultView={Views.WEEK}
           localizer={localizer}
           events={Object.values(events)}
