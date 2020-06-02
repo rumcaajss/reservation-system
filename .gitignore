@@ -16,10 +16,12 @@
 .DS_Store
 .env.local
 .env.build
+.env.build.prod
 .env.development.local
 .env.test.local
 .env.production.local
 .env
+.env.prod
 
 
 npm-debug.log*

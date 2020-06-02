@@ -166,7 +166,7 @@ function Parking(props) {
         spacing={2}
         className={classes.parkingGrid}
       > 
-        {Object.keys(firestoreData.places).map(value => (
+        {Object.keys(firestoreData.places).sort().map(value => (
           <Grid key={value} xs={5} md={2} item>
             <ParkingPlace 
               onClick={() => handleSpotClick(value)} 
