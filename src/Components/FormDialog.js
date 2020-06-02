@@ -58,14 +58,32 @@ export default function FormDialog(props) {
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const name = Cookies.get('name');
-  const { preview, cameraNeeded, roomNeeded } = props;
-  const lockSubmit = !preview && roomNeeded && !props.bookingRoom;
-  const evtId = props.evt._id || null;
+  const { 
+    preview, 
+    open, 
+    cameraNeeded, 
+    setCameraNeeded,
+    roomNeeded, 
+    setRoomNeeded, 
+    bookingRoom, 
+    setBookingRoom,
+    evt, 
+    startDate,
+    setStartDate, 
+    endDate, 
+    setEndDate, 
+    onCloseModal, 
+    onRemoveEvent,
+    onSubmitModal,
+  } = props;
+  const lockSubmit = roomNeeded && !bookingRoom;
+  const evtId = evt._id || null;
   let lockEdit = false;
 
-  if (props.preview && props.evt.booked_by.name !== name) {
+  if (preview && evt.booked_by.name !== name) {
     lockEdit = true;
   } 
+
   const classes = useStyles();
   const roomChoices = {
     'big_room': 'Big Conference Room',
@@ -78,27 +96,27 @@ export default function FormDialog(props) {
   const onEndDateChange = (newValue) => {
     setError(false);
     setErrorMsg('');
-    if (isBefore(newValue, props.startDate)) {
-      props.setEndDate(props.startDate);
+    if (isBefore(newValue, startDate)) {
+      setEndDate(startDate);
       setError(true);
       setErrorMsg('End time can\'t be before start time.');
       return;
     }
-    props.setEndDate(newValue);
+    setEndDate(newValue);
   }
   
   const onStartDateChange = (newValue) => {
-    props.setStartDate(newValue);
-    props.setEndDate(newValue);
+    setStartDate(newValue);
+    setEndDate(newValue);
   }
   
   const handleRoomChange = (event) => {
-    props.setBookingRoom(event.target.value);
+    setBookingRoom(event.target.value);
   };
 
   const handleRoomNeededChange = (event) => {
-    props.setBookingRoom(''); 
-    props.setRoomNeeded(event.target.checked)
+    setBookingRoom(''); 
+    setRoomNeeded(event.target.checked)
   }
 
   return (
@@ -106,8 +124,8 @@ export default function FormDialog(props) {
       <Dialog 
         fullWidth={true}
         maxWidth='xs'
-        open={props.open} 
-        onClose={props.onCloseModal} 
+        open={open} 
+        onClose={onCloseModal} 
         aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">{preview ? 'Booking preview' : 'Make a booking'}</DialogTitle>
         <DialogContent>
@@ -118,8 +136,8 @@ export default function FormDialog(props) {
             <Grid container justify="center" direction="column" align="center">
             {preview &&
               <div>
-                <Avatar alt={props.evt.booked_by.name} src={props.evt.booked_by.avatar} />
-                <Typography component="p" variant="subtitle1" color="inherit">{props.evt.booked_by.name}</Typography>
+                <Avatar alt={evt.booked_by.name} src={evt.booked_by.avatar} />
+                <Typography component="p" variant="subtitle1" color="inherit">{evt.booked_by.name}</Typography>
               </div>
             }
               
@@ -134,7 +152,7 @@ export default function FormDialog(props) {
                 id="date-picker-inline"
                 label="Select Date"
                 disablePast
-                value={props.startDate}
+                value={startDate}
                 onChange={onStartDateChange}
                 className={classes.formElement}
               />
@@ -145,7 +163,7 @@ export default function FormDialog(props) {
                 margin="normal"
                 id="start-time"
                 label="Start time"
-                value={props.startDate}
+                value={startDate}
                 onChange={onStartDateChange}
                 ampm={false}
                 className={classes.formElement}
@@ -159,7 +177,7 @@ export default function FormDialog(props) {
                 margin="normal"
                 id="end-time"
                 label="End Time"
-                value={props.endDate}
+                value={endDate}
                 onChange={onEndDateChange}
                 ampm={false}
                 className={classes.formElement}
@@ -170,7 +188,7 @@ export default function FormDialog(props) {
                     <Checkbox
                       disabled={lockEdit}
                       checked={cameraNeeded}
-                      onChange={(evt) => props.setCameraNeeded(evt.target.checked)}
+                      onChange={(event) => setCameraNeeded(event.target.checked)}
                       name="camera"
                       color="primary"
                     />
@@ -197,7 +215,7 @@ export default function FormDialog(props) {
                     disabled={lockEdit}
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
-                    value={props.bookingRoom}
+                    value={bookingRoom}
                     onChange={handleRoomChange}
                   >
                     {Object.keys(roomChoices).map(roomChoice => (
@@ -212,14 +230,14 @@ export default function FormDialog(props) {
         </DialogContent>
         <DialogActions>
           {lockEdit ? 
-            <Button onClick={props.onCloseModal} color="primary">
+            <Button onClick={onCloseModal} color="primary">
               Ok
             </Button>
           :
             <div>
               {!lockEdit && preview ? 
               <Button 
-                onClick={() => props.onRemoveEvent(props.evt._id)} 
+                onClick={() => onRemoveEvent(evt._id)} 
                 className={classes.removeButton} 
                 variant="outlined" 
                 color="secondary">
@@ -227,11 +245,11 @@ export default function FormDialog(props) {
               </Button>
               : ''
               }
-              <Button onClick={props.onCloseModal} color="primary">
+              <Button onClick={onCloseModal} color="primary">
                 Cancel
               </Button>
               <Button 
-                onClick={() => props.onSubmitModal(evtId)} 
+                onClick={() => onSubmitModal(evtId)} 
                 disabled={lockSubmit}
                 color="primary">
                 Save

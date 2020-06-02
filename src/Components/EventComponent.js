@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, Typography, Avatar } from '@material-ui/core';
+import { Box, Avatar } from '@material-ui/core';
 import RoomIcon  from '@material-ui/icons/Room';
 import VideocamIcon from '@material-ui/icons/Videocam';
 

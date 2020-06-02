@@ -9,11 +9,20 @@ import {
   setHours, 
   setMinutes, 
   isBefore,
+  sub
 } from 'date-fns';
 
 import FormDialog from '../Components/FormDialog';
 import EventComponent from '../Components/EventComponent';
-import { Button, Container, Box } from '@material-ui/core';
+import LastPerson from '../Components/LastPerson';
+import { 
+  Button, 
+  Container, 
+  Box,
+} from '@material-ui/core';
+import RefreshIcon from '@material-ui/icons/Refresh';
+import AddIcon from '@material-ui/icons/Add';
+import PersonPinIcon from '@material-ui/icons/PersonPin';
 
 import Cookies from 'js-cookie';
 import { firestore } from '../firebase'
@@ -31,11 +40,13 @@ const localizer = dateFnsLocalizer({
 
 function MyCalendar(props) {
   const EXAMS_COLLECTION = 'exams';
-  const { setSnackBarOpen, setSnackMessage } = props;
+  const { setSnackBarOpen, setSnackMessage, setBackdropOpen } = props;
   const scrollToTime = setMinutes(setHours(new Date(), 6), 0)
   const [events, setEvents]  = useState({});
   const [activeEvent, setActiveEvent] = useState({});
   const [preview, setPreview] = useState(false);
+  const [lastPersonModalOpen, setLastPersonModalOpen] = useState(false);
+  const [lastPerson, setLastPerson] = useState({});
   const [modalOpen, setModalOpen] = useState(false);
   const [bookingRoom, setBookingRoom] = useState('');
   const [startDate, setStartDate] = useState(new Date());
@@ -56,6 +67,7 @@ function MyCalendar(props) {
     setModalOpen(true);
 
   }
+
   const handleSubmit = async (examId) => {
     let evt = {
       title: name,
@@ -84,7 +96,34 @@ function MyCalendar(props) {
     resetState();
   }
   
+  const getCamera = async () => {
+    setBackdropOpen(true);
+    try {
+      let obj = {};
+      const querySnapshot = await firestore.collection(EXAMS_COLLECTION)
+        .where('camera_needed', '==', true)
+        .where('start', '<', new Date() )
+        .orderBy('start', 'desc')
+        .limit(1)
+        .get();
+      querySnapshot.forEach(function(doc) {
+        let exam = {...doc.data()};
+        let lastPerson = {};
+        lastPerson.name = exam.booked_by.name;
+        lastPerson.avatar = exam.booked_by.avatar;
+        setLastPerson(lastPerson);
+        setLastPersonModalOpen(true);
+      });
+    } catch(e) {
+      console.log(e)
+      setSnackBarOpen(true);
+      setSnackMessage('Unable to localize person');
+    }
+    setBackdropOpen(false);
+  }
+
   const updateExam = async (id, data) => {
+    setBackdropOpen(true);
     try {
       await firestore.collection(EXAMS_COLLECTION).doc(id).set(data);
       let evtCopy = {...events};
@@ -98,10 +137,11 @@ function MyCalendar(props) {
       setSnackBarOpen(true);
       setSnackMessage('Something went wrong. Please try again.');
     }
-
+    setBackdropOpen(false);
   }
 
   const createExam = async (exam) => {
+    setBackdropOpen(true);
     try {
       const docRef = await firestore.collection(EXAMS_COLLECTION).add(exam);
       setSnackBarOpen(true);
@@ -115,9 +155,11 @@ function MyCalendar(props) {
       setSnackBarOpen(true);
       setSnackMessage('Something went wrong. Please try again.');
     }
+    setBackdropOpen(false);
   }
 
   const removeExam = async (id) => {
+    setBackdropOpen(true);
     try {
       await firestore.collection(EXAMS_COLLECTION).doc(id).delete();
       let evtCopy = {...events};
@@ -129,7 +171,8 @@ function MyCalendar(props) {
       setSnackBarOpen(true);
       setSnackMessage('Something went wrong. Please try again.');
     }
-
+    
+    setBackdropOpen(false);
     setModalOpen(false);
     resetState();
   }
@@ -155,10 +198,14 @@ function MyCalendar(props) {
     setModalOpen(true);
   }
 
-  useEffect(() => {
-    const readData = async () => {
+  const readData = async () => {
+    const defaultDate = sub(new Date(), {
+      months: 1,
+    })
+    setBackdropOpen(true);
+    try {
       let obj = {};
-      const querySnapshot = await firestore.collection("exams").where('start', '>=', new Date() ).get();
+      const querySnapshot = await firestore.collection(EXAMS_COLLECTION).where('start', '>=', defaultDate ).get();
       querySnapshot.forEach(function(doc) {
         let exam = {...doc.data()};
         let examId = doc.id;
@@ -168,7 +215,14 @@ function MyCalendar(props) {
         obj[examId] = exam;
       });
       setEvents({...obj});
+    } catch(e) {
+      setSnackBarOpen(true);
+      setSnackMessage('Unable to connect to database.');
     }
+    setBackdropOpen(false);
+  }
+
+  useEffect(() => {
     readData();
   }, [])
 
@@ -179,11 +233,20 @@ function MyCalendar(props) {
         > 
         <Box
           display="flex"
-          justifyContent="center"
+          justifyContent="flex-end"
           m={3}
         >
-          <Button variant="outlined" color="primary" onClick={() => setModalOpen(true)}>
+          <Button variant="contained" color="primary" onClick={() => setModalOpen(true)}>
+            <AddIcon />
             Make a booking
+          </Button>
+          <Button variant="outlined" color="primary" onClick={readData}>
+            <RefreshIcon />
+            Refresh events
+          </Button>
+          <Button variant="outlined" color="primary" onClick={getCamera}>
+            <PersonPinIcon />
+            Who has a camera?
           </Button>
         </Box>
         <Calendar
@@ -216,6 +279,11 @@ function MyCalendar(props) {
           preview={preview}
         />
       </Container>
+      <LastPerson 
+        open={lastPersonModalOpen}
+        setOpen={setLastPersonModalOpen}
+        person={lastPerson}
+      />
     </div>
 
   )
