@@ -20,6 +20,7 @@ import {
   Container, 
   Box,
 } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import AddIcon from '@material-ui/icons/Add';
 import PersonPinIcon from '@material-ui/icons/PersonPin';
@@ -38,7 +39,23 @@ const localizer = dateFnsLocalizer({
   locales,
 })
 
+const useStyles = makeStyles((theme) => ({
+  buttonSet: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    [theme.breakpoints.up('sm')]: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end'
+    }
+  },
+  button: {
+    margin: theme.spacing(1)
+  }
+}));
+
 function MyCalendar(props) {
+  const classes = useStyles();
   const EXAMS_COLLECTION = 'exams';
   const { setSnackBarOpen, setSnackMessage, setBackdropOpen } = props;
   const scrollToTime = setMinutes(setHours(new Date(), 6), 0)
@@ -232,21 +249,35 @@ function MyCalendar(props) {
         maxWidth="lg"
         > 
         <Box
-          display="flex"
-          justifyContent="flex-end"
           m={3}
+          className={classes.buttonSet}
         >
-          <Button variant="contained" color="primary" onClick={() => setModalOpen(true)}>
+          <Button 
+            variant="contained" 
+            color="primary" 
+            onClick={() => setModalOpen(true)}
+            className={classes.button}
+          >
             <AddIcon />
             Make a booking
           </Button>
-          <Button variant="outlined" color="primary" onClick={readData}>
+          <Button 
+            variant="outlined" 
+            color="primary" 
+            onClick={readData}
+            className={classes.button}
+          >
             <RefreshIcon />
             Refresh events
           </Button>
-          <Button variant="outlined" color="primary" onClick={getCamera}>
+          <Button 
+            variant="outlined" 
+            color="primary" 
+            onClick={getCamera}
+            className={classes.button}
+          >
             <PersonPinIcon />
-            Who has a camera?
+            Who used the camera?
           </Button>
         </Box>
         <Calendar

@@ -1,5 +1,11 @@
 import React from 'react';
-import {  Link, Typography, Paper, Grid, Avatar } from '@material-ui/core';
+import {  
+  Link, 
+  Typography, 
+  Paper, 
+  Grid, 
+  Avatar 
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Copyright from '../Components/Copyright';
 
@@ -24,7 +30,6 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: theme.palette.grey['200'],
     color: theme.palette.secondary.main,
   },
 }));
