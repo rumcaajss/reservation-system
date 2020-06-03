@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { createMuiTheme, responsiveFontSizes, ThemeProvider, CssBaseline } from '@material-ui/core';
+import { 
+  createMuiTheme, 
+  responsiveFontSizes, 
+  ThemeProvider, 
+  CssBaseline 
+} from '@material-ui/core';
 import Navbar from './Components/Navbar';
 import AppRouter from './AppRouter';
 import { AuthService } from './utils/Auth';
@@ -10,7 +15,7 @@ let customizations = {
       main: '#114b5f',
     },
     secondary: {
-      main: '#1a936f',
+      main: '#47878a',
     }
   }
 }

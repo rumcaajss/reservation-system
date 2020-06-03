@@ -1,18 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, 
-        Toolbar, 
-        AppBar, 
-        MenuItem, 
-        Avatar, 
-        Box, 
-        Menu, 
-        IconButton,
-        Link  } 
-        from '@material-ui/core';
+import { 
+  Typography, 
+  Toolbar, 
+  AppBar, 
+  MenuItem, 
+  Avatar, 
+  Box, 
+  Menu, 
+  IconButton,
+  Link,
+  Button  
+} from '@material-ui/core';
+import Drawer from './Drawer';
+import MenuIcon from '@material-ui/icons/Menu';
 import { AuthService } from '../utils/Auth';
 import { useHistory } from "react-router-dom";
 import Cookies from 'js-cookie';
+import { setDayWithOptions } from 'date-fns/fp';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -42,18 +47,25 @@ const useStyles = makeStyles(theme => ({
       display: 'block',
     },
   },  
+  menuIcon: {
+    color: theme.palette.common.white,
+  }
 }));
 
 export default function Navbar(props) {
   const classes = useStyles();
   let history = useHistory();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const { loggedIn } = props;
   const open = Boolean(anchorEl);
   const avatar = Cookies.get('avatar');
   const name = Cookies.get('name');
   const handleMenu = event => {
     setAnchorEl(event.currentTarget);
   };
+
+ 
 
   const handleLogout = () => {
     AuthService.signOut(() => {
@@ -69,13 +81,18 @@ export default function Navbar(props) {
     <div className={classes.root}>
       <AppBar className={classes.appBar} position="static">
         <Toolbar>
-        <Link href="/" variant="h6" className={classes.title}>
-          Booking App
-        </Link>
-          {/* <Typography variant="h6" className={classes.title}>
+          {loggedIn && 
+            <Button 
+              className={classes.menuIcon}
+              onClick={() => setDrawerOpen(true)}
+            >
+              <MenuIcon />
+            </Button>
+          }
+          <Link href="/" variant="h6" className={classes.title}>
             Booking App
-          </Typography> */}
-            {props.loggedIn && (<Box className={classes.userInfo}> 
+          </Link>
+            {loggedIn && (<Box className={classes.userInfo}> 
               <Box className={classes.nameContainer} mr={1}><Typography component="span">{name}</Typography></Box>
               <IconButton
                 aria-label="account of current user"
@@ -85,7 +102,7 @@ export default function Navbar(props) {
                 color="inherit"
                 className={classes.avatar}
               >
-              <Avatar  alt="andrzej" src={avatar} />
+              <Avatar  alt={name} src={avatar} />
               </IconButton>
               <Menu
                 id="menu-appbar"
@@ -107,6 +124,10 @@ export default function Navbar(props) {
             </Box>)}
           
         </Toolbar>
+        <Drawer 
+          open={drawerOpen}
+          setDrawerOpen={setDrawerOpen}
+        />
       </AppBar>
     </div>
   );

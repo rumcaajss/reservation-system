@@ -11,6 +11,7 @@ const useStyles = makeStyles((theme) => ({
     height: 24,
     width: 24,
   },
+
 }));
 
 export default function EventComponent(props) {
@@ -18,7 +19,10 @@ export default function EventComponent(props) {
   const classes = useStyles();
 
   return (
-    <Box display="flex" flexDirection="column">
+    <Box 
+      display="flex" 
+      flexDirection="column"
+    >
       <Box display="flex" justifyContent="space-around">
         <Avatar 
           alt={event.booked_by.name} 
