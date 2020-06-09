@@ -28,7 +28,11 @@ function App() {
   const [ loggedIn, setLoggedIn ] = useState(true);
   useEffect(()=> {
     AuthService.isAuthed(setLoggedIn);
-  }, [])
+
+    if (!loggedIn) {
+      AuthService.authenticate(setLoggedIn);
+    }
+  }, [loggedIn])
 
   return (
     <ThemeProvider theme={theme}>
